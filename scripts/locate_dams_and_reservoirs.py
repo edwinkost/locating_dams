@@ -34,8 +34,8 @@ hydrolakes_ids = pcr.readmap(hydrolakes_file)
 # calculate catchment area (in km2) based on pcrglobwb ldd
 catchment_area_km2 = pcr.catchmenttotal(cell_area, ldd_map) / (1000.*1000.)
 
-# calculate rough estimation of hydrolakes surface area based on pcrglobwb cell area
-hydrolakes_pcrglobwb_area = pcr.areatotal(cell_area, hydrolakes_ids)
+# calculate rough estimation of hydrolakes surface area based on pcrglobwb cell area (unit: m2)
+hydrolakes_pcrglobwb_area_m2 = pcr.areatotal(cell_area, hydrolakes_ids)
 
 # convert table/column to a pcraster map of dam ids
 cmd = "col2map --clone " + clone_map_file + " -M -x 4 -y 3 -v 1 -S -s ',' " + column_input_file + " dam_ids.map" 
@@ -144,6 +144,7 @@ for dam_id in range(1, number_of_dams + 1):
         all_location_corrected_dam_ids = pcr.cover(all_location_corrected_dam_ids, location_corrected_dam_id)
     
     # get the reservoir surface area based on AHA (unit: m2)
+    this_dam_point = pcr.defined(location_corrected_dam_id)
     aha_surface_area_m2 = pcr.ifthen(this_dam_point, aha_surface_area_km2) * 1000.*1000.
     aha_surface_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(aha_surface_area),1)[0]
     
@@ -154,7 +155,7 @@ for dam_id in range(1, number_of_dams + 1):
     if aha_surface_area_m2_this_dam_cell_value < cell_area_m2_this_dam_cell_value:
         
         # this means the reservoir extent will be within a cell
-        reservoir_surface_area           = pcr.scalar(aha_surface_area_m2_this_dam_cell_value)
+        reservoir_surface_area           = pcr.ifthen(this_dam_point, aha_surface_area_m2_this_dam_cell_value)
         reservoir_surface_area_per_cell  = reservoir_surface_area
         
         # fraction of surface water within a cell
@@ -162,45 +163,57 @@ for dam_id in range(1, number_of_dams + 1):
 
     else:
 
-        # find the hydrolakes ID and its extent
-        hydrolakes_id_selected = ???
-
-        # expanding the point to its neighbours
+        # this is for the case if reservoirs covering multiple cells
+        
+        # make a search window to find the nearest hydrolakes - expanding the point to its neighbours
         search_window = pcr.windowmajority(this_dam_point, 5./60. * 3.)
         # - note using the window_length = 2 to avoid 'too large' window size
         
         # find the hydrolakes ids within this search window 
-        hydrolakes_ids_within_search_window = pcr.ifthen(pcr.defined(search_window), hydro_lakes)
+        hydrolakes_ids_within_search_window = pcr.ifthen(pcr.defined(search_window), hydrolakes_ids)
         
         # check whether there are more than one hydrolakes_ids_within_search_window
-        number_of_hydrolakes_ids_within_search_window = ???
+        number_of_hydrolakes_ids_within_search_window = pcr.cellvalue(pcr.maximum(pcr.scalar(pcr.clump(hydrolakes_ids_within_search_window))))[0]
 
-        if number_of_hydrolakes_ids_within_search_window > 1:
+        if number_of_hydrolakes_ids_within_search_window > 0:
             
             # find the one that has the most similar surface area to the estimate on hydrolakes_pcrglobwb_area
-            absolute_difference_surface_area = pcr.abs(aha_surface_area_km2 - hydrolakes_pcrglobwb_area)
-
-            area_order = pcr.areaorder(absolute_difference_surface_area, location_corrected_dam_id)
+            absolute_difference_surface_area = pcr.abs(hydrolakes_pcrglobwb_area_m2 - aha_surface_area_m2_this_dam_cell_value)
+            absolute_difference_surface_area = pcr.ifthen(pcr.defined(search_window), absolute_difference_surface_area)
             
-            # - choose the one with shortest distance (order/rank = 1)
-            location_corrected_dam_id = pcr.ifthen(area_order == 1, pcr.nominal(dam_id))
-
+            class_map_boolean = pcr.defined(absolute_difference_surface_area)
+            class_map_nominal = pcr.ifthen(class_map_boolean, pcr.nominal(1.0))
             
-            pass
-        
+            area_order = pcr.areaorder(absolute_difference_surface_area, class_map_nominal)
+            
+            # - choose the one with order/rank = 1 (minimum difference in surface area)
+            hydrolakes_id_selected = pcr.mapmaximum(pcr.scalar(pcr.ifthen(area_order == 1, pcr.nominal(hydrolakes_ids_within_search_window))))
+            
+            # - the chosen hydro lakes id and assign in to the dam point
+            hydrolakes_id_for_this_dam_point = pcr.ifthen(this_dam_point, pcr.nominal(hydrolakes_id_selected))
+            
+            # make the sub catchment until the dam point and its ldd
+            sub_catchment = pcr.subcatchment(ldd_map, this_dam_point)
+            ldd_above_the_dam_point = pcr.lddmask(ldd_map, sub_catchment)
+            
+            # - expand it until the entire reservoirs
+            hydrolakes_id_for_this_dam_point = pcr.path(ldd_above_the_dam_point, hydrolakes_ids)
+            hydrolakes_id_for_this_dam_point = pcr.ifthen(hydrolakes_id_for_this_dam_point == pcr.nominal(hydrolakes_id_selected), hydrolakes_id_for_this_dam_point)
+            
+            # identify the number of cells based on the hydrolakes
+            number_of_cells_according_to_hydrolakes = pcr.areatotal(pcr.scalar(1.0), hydrolakes_id_for_this_dam_point)
+		    
+            # obtaining reservoir surface area
+            reservoir_surface_area_per_cell = aha_surface_area_m2_this_dam_cell_value / number_of_cells_according_to_hydrolakes
+            
+            # fraction of surface water within a cell
+            reservoir_fraction_water = reservoir_surface_area_per_cell / cell_area
+
         else:
 
-            hydrolakes_id_selected = hydrolakes_ids_within_search_window
+            # if not identified in the hydrolakes
+            aha_surface_area_km2
 
-        # identify the number of cells based on hydrolakes
-        number_of_cells_according_to_hydrolakes
-
-        # obtaining reservoir surface area
-        reservoir_surface_area          = number_of_cells_according_to_hydrolakes * reservoir_surface_area_per_cell
-        reservoir_surface_area_per_cell = reservoir_surface_area / number_of_cells_according_to_hydrolakes
-        
-        # fraction of surface water within a cell
-        reservoir_fraction_water = reservoir_surface_area_per_cell / cell_area
         
     
     
