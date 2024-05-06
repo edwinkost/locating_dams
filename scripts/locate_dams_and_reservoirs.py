@@ -8,8 +8,10 @@ import shutil
 import pcraster as pcr
 import virtualOS as vos
 
-# table/column input file - this should be sorted based on reservoir capacities (the largest the lower ids)
-column_input_file = "../aha_hydropowers/existing_reservoirs_v2024-04-10_selected_no-headers.csv"
+# ~ # table/column input file - this should be sorted based on reservoir capacities (the largest the lower ids)
+# ~ column_input_file = "../aha_hydropowers/existing_reservoirs_v2024-04-10_selected_no-headers.csv"
+
+column_input_file = "../aha_hydropowers/corrected_dams_2024-04-26_no-headers.csv"
 
 # ~ # - for testing with 74 and 85 (multiple pixel problem)
 # ~ column_input_file = "../aha_hydropowers/existing_reservoirs_v2024-04-10_selected_no-headers-test74and85.csv"
@@ -146,7 +148,7 @@ for dam_id in range(1, number_of_dams + 1):
     # get the reservoir surface area based on AHA (unit: m2)
     this_dam_point = pcr.defined(location_corrected_dam_id)
     aha_surface_area_m2 = pcr.ifthen(this_dam_point, aha_surface_area_km2) * 1000.*1000.
-    aha_surface_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(aha_surface_area),1)[0]
+    aha_surface_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(aha_surface_area_m2),1)[0]
     
     # get the cell area for this dam (unit: m2)
     cell_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(pcr.ifthen(this_dam_point, cell_area)))
@@ -212,20 +214,58 @@ for dam_id in range(1, number_of_dams + 1):
         else:
 
             # if not identified in the hydrolakes
-            aha_surface_area_km2
 
+            # start with assuming everything from zero
+            reservoir_surface_area             = 0.0
+            reservoir_surface_area_per_cell    = 0.0
+            reservoir_fraction_water           = 0.0
+            number_of_cells_for_this_reservoir = 0.0
+
+            # assign the current cell as the reservoir 
+            reservoir_extent                   = this_dam_point
+            reservoir_surface_area             = pcr.ifthen(reservoir_extent, cell_area)
+            reservoir_surface_area_per_cell    = pcr.ifthen(reservoir_extent, cell_area)
+            reservoir_fraction_water           = pcr.ifthen(reservoir_extent, 1.0)
+            number_of_cells_for_this_reservoir = 1.0
+            
+            # calculate the remaining surface area that needs to be covered
+            remaining_area = aha_surface_area_m2_this_dam_cell_value - pcr.cellvalue(pcr.maptotal(reservoir_surface_area_per_cell))
+            
+            while remaining_area > 0:
+            
+                # identify the upstream cells
+                upstream_cells_of_reservoirs = pcr.boolean(pcr.downstream(ldd_map, pcr.cover(pcr.scalar(reservoir_cells), 0.0)))
+
+                # number of upstream cells
+                num_of_upstream_cells = pcr.maptotal(pcr.scalar(upstream_cells_of_reservoirs))
+                
+                # reservoir surface area at the upstream cells
+                additional_reservoir_surface_area_per_cell = pcr.ifthen(upstream_cells_of_reservoirs, pcr.min(remaining_area / num_of_upstream_cells, cell_area))
+                
+                # the updated reservoir surface area per cell
+                reservoir_surface_area_per_cell = pcr.cover(reservoir_surface_area_per_cell, additional_reservoir_surface_area_per_cell)
+                
+                # calculate the remaining surface area that needs to be covered
+                remaining_area = aha_surface_area_m2_this_dam_cell_value - pcr.cellvalue(pcr.maptotal(reservoir_surface_area_per_cell))
+            
+            # update the reservoir with upstream cells
+            reservoir_extent         = pcr.cover(reservoir_extent, pcr.ifthen(reservoir_surface_area_per_cell > 0.0, pcr.boolean(1.0))
+            reservoir_surface_area   = pcr.ifthen(reservoir_extent, pcr.maptotal(reservoir_surface_area_per_cell))
+            reservoir_fraction_water = reservoir_surface_area_per_cell / cell_area
         
-    
-    
-    # compare aha_surface_area with individual cell_area
-    
-    
-    
 
-    
-        
+    # we summarize all reservoirs into single variables 
+    if dam_id == 1:    
+        all_reservoir_extent_ids     = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(all_location_corrected_dam_ids)))
+        all_reservoir_surface_area   = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_surface_area)))
+        all_reservoir_fraction_water = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(all_reservoir_fraction_water))) 
+    else:
+        all_reservoir_extent_ids     = pcr.cover(all_reservoir_extent_ids,     pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(all_location_corrected_dam_ids))))
+        all_reservoir_surface_area   = pcr.cover(all_reservoir_surface_area,   pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_surface_area))))
+        all_reservoir_fraction_water = pcr.cover(all_reservoir_fraction_water, pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(all_reservoir_fraction_water)))) 
 
-# save the all_location_corrected_dam_ids to a pcraster map
+
+# save all_location_corrected_dam_ids to a pcraster map - this will be the location of all dams/outlets
 pcr.report(all_location_corrected_dam_ids, "corrected_dam_ids.map")
 
 # obtain the catchment areas of all_location_corrected_dam_ids
@@ -236,4 +276,7 @@ pcr.report(corrected_dam_catchment_area_km2, "corrected_dam_catchment_area_km2.m
 cmd = "map2col corrected_dam_ids.map corrected_dam_catchment_area_km2.map corrected_dams.txt"
 print(cmd); os.system(cmd)        
 
-
+# save also the following variables for pcrglobwb input:
+pcr.report(all_reservoir_extent_ids,     "reservoir_extent_ids.map")
+pcr.report(all_reservoir_surface_area,   "reservoir_surface_area_ids.map")
+pcr.report(all_reservoir_fraction_water, "reservoir_fraction_water_ids.map")
