@@ -97,7 +97,7 @@ for dam_id in range(1, number_of_dams + 1):
     if aha_surface_area_m2_this_dam_cell_value < cell_area_m2_this_dam_cell_value:
         
         # this means the reservoir extent will be within a cell
-        reservoir_surface_area           = pcr.ifthen(this_dam_point, aha_surface_area_m2_this_dam_cell_value)
+        reservoir_surface_area           = pcr.ifthen(this_dam_point, pcr.spatial(pcr.scalar(aha_surface_area_m2_this_dam_cell_value)))
         reservoir_surface_area_per_cell  = reservoir_surface_area
         
         # fraction of surface water within a cell
