@@ -135,6 +135,7 @@ for dam_id in range(1, number_of_dams + 1):
             
             # - choose the one with order/rank = 1 (minimum difference in surface area)
             hydrolakes_id_selected = pcr.mapmaximum(pcr.scalar(pcr.ifthen(area_order == 1, pcr.nominal(hydrolakes_ids_within_search_window))))
+            pcr.aguila(hydrolakes_id_selected)
             
             # - the chosen hydro lakes id and assign in to the dam point
             hydrolakes_id_for_this_dam_point = pcr.ifthen(this_dam_point, pcr.nominal(hydrolakes_id_selected))
