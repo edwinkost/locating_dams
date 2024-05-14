@@ -82,6 +82,8 @@ number_of_dams = 131
 
 number_of_dams = 10
 
+number_of_dams = 2
+
 
 for dam_id in range(1, number_of_dams + 1):
     
@@ -120,6 +122,8 @@ for dam_id in range(1, number_of_dams + 1):
         
         # find the hydrolakes ids within this search window 
         hydrolakes_ids_within_search_window = pcr.ifthen(pcr.defined(search_window), hydrolakes_ids)
+        
+        pcr.aguila(hydrolakes_ids_within_search_window)
         
         # check whether there are more than one hydrolakes_ids_within_search_window
         number_of_hydrolakes_ids_within_search_window = pcr.cellvalue(pcr.mapmaximum(pcr.scalar(pcr.clump(hydrolakes_ids_within_search_window))),1)[0]
@@ -167,7 +171,7 @@ for dam_id in range(1, number_of_dams + 1):
             reservoir_extent = pcr.defined(hydrolakes_id_for_this_dam_point)
             reservoir_extent = pcr.ifthen(reservoir_extent, reservoir_extent)
             
-            pcr.aguila(reservoir_extent)
+            # ~ pcr.aguila(reservoir_extent)
 
         else:
 
