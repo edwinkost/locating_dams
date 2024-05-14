@@ -178,7 +178,7 @@ for dam_id in range(1, number_of_dams + 1):
             number_of_cells_for_this_reservoir = 1.0
             
             # calculate the remaining surface area that needs to be covered
-            remaining_area = aha_surface_area_m2_this_dam_cell_value - pcr.cellvalue(pcr.maptotal(reservoir_surface_area_per_cell))
+            remaining_area = aha_surface_area_m2_this_dam_cell_value - pcr.cellvalue(pcr.maptotal(reservoir_surface_area_per_cell),1)[0]
             
             while remaining_area > 0:
             
