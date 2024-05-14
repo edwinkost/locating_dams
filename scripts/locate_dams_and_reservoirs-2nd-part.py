@@ -117,7 +117,7 @@ for dam_id in range(1, number_of_dams + 1):
         # this is for the case if reservoirs covering multiple cells
         
         # make a search window to find the nearest hydrolakes - expanding the point to its neighbours
-        search_window = pcr.windowmajority(this_dam_point, 5./60. * 3.)
+        search_window = pcr.windowmajority(this_dam_point, 5./60. * 5.)
         # - note using the window_length = 2 to avoid 'too large' window size
         
         # find the hydrolakes ids within this search window 
