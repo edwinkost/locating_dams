@@ -150,7 +150,7 @@ for dam_id in range(1, number_of_dams + 1):
             hydrolakes_id_selected_extent = pcr.path(ldd_above_the_dam_point, hydrolakes_id_selected_extent)
             
             # - provide an id to this reservoir
-            hydrolakes_id_for_this_dam_point = pcr.ifthen(hydrolakes_id_selected_extent, dam_id)
+            hydrolakes_id_for_this_dam_point = pcr.ifthen(hydrolakes_id_selected_extent, pcr.spatial(pcr.scalar(dam_id)))
             
             # identify the number of cells based on the hydrolakes
             number_of_cells_according_to_hydrolakes = pcr.areatotal(pcr.scalar(1.0), hydrolakes_id_for_this_dam_point)
