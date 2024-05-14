@@ -91,7 +91,7 @@ for dam_id in range(1, number_of_dams + 1):
     aha_surface_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(aha_surface_area_m2),1)[0]
     
     # get the cell area for this dam (unit: m2)
-    cell_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(pcr.ifthen(this_dam_point, cell_area)))
+    cell_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(pcr.ifthen(this_dam_point, cell_area)))[0]
     
     # obtaining the reservoir extent (including estimating surface area)
     if aha_surface_area_m2_this_dam_cell_value < cell_area_m2_this_dam_cell_value:
