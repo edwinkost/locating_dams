@@ -30,7 +30,9 @@ cell_area_file = "../pcrglobwb_maps/cdo_gridarea_clone_global_05min_correct_lats
 cell_area = pcr.readmap(cell_area_file)
 
 # hydrolakes
-hydrolakes_file = "../pcrglobwb_maps/areaIDs.map"
+# ~ hydrolakes_file = "../pcrglobwb_maps/areaIDs.map"
+# - using pcrglobwb lake and reservoir extent
+hydrolakes_file = "../pcrglobwb_maps/waterBodyIds_waterBodies5ArcMin_2010.map"
 hydrolakes_ids = pcr.nominal(pcr.readmap(hydrolakes_file))
 
 # calculate catchment area (in km2) based on pcrglobwb ldd
@@ -79,8 +81,6 @@ rel_dif_catchment_area = pcr.abs(aha_catchment_area_km2 - dam_ids_pcrglobwb_catc
 number_of_dams = 131
 
 number_of_dams = 10
-
-number_of_dams = 2
 
 
 for dam_id in range(1, number_of_dams + 1):
