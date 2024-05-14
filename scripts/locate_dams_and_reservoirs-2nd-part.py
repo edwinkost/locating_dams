@@ -135,7 +135,6 @@ for dam_id in range(1, number_of_dams + 1):
             
             # - choose the one with order/rank = 1 (minimum difference in surface area)
             hydrolakes_id_selected = pcr.mapmaximum(pcr.scalar(pcr.ifthen(area_order == 1, pcr.nominal(hydrolakes_ids_within_search_window))))
-            pcr.aguila(hydrolakes_id_selected)
             
             # - the chosen hydro lakes id and assign in to the dam point
             hydrolakes_id_for_this_dam_point = pcr.ifthen(this_dam_point, pcr.nominal(hydrolakes_id_selected))
@@ -144,9 +143,14 @@ for dam_id in range(1, number_of_dams + 1):
             sub_catchment = pcr.subcatchment(ldd_map, this_dam_point)
             ldd_above_the_dam_point = pcr.lddmask(ldd_map, sub_catchment)
             
-            # - expand it until the entire reservoirs
-            hydrolakes_id_for_this_dam_point = pcr.path(ldd_above_the_dam_point, hydrolakes_ids)
-            hydrolakes_id_for_this_dam_point = pcr.ifthen(hydrolakes_id_for_this_dam_point == pcr.nominal(hydrolakes_id_selected), hydrolakes_id_for_this_dam_point)
+            # define the extent based on the hydrolakes
+            hydrolakes_id_selected_extent = pcr.ifthen(hydrolakes_ids == hydrolakes_id_selected, pcr.boolean(1.0))
+            
+            # - expand the extent until the dam point until the entire reservoirs
+            hydrolakes_id_selected_extent = pcr.path(ldd_above_the_dam_point, hydrolakes_id_selected_extent)
+            
+            # - provide an id to this reservoir
+            hydrolakes_id_for_this_dam_point = pcr.ifthen(hydrolakes_id_selected_extent, dam_id)
             
             # identify the number of cells based on the hydrolakes
             number_of_cells_according_to_hydrolakes = pcr.areatotal(pcr.scalar(1.0), hydrolakes_id_for_this_dam_point)
