@@ -58,13 +58,13 @@ print(cmd); os.system(cmd)
 aha_latitudes = pcr.readmap("aha_latitudes.map") 
 
 # convert table/column to a pcraster map of the latitude coordinates based on AHA
-cmd = "col2map --clone " + clone_map_file + " -M -x 4 -y 3 -v 2 -S -s ',' " + column_input_file + " aha_longitudes.map"
+cmd = "col2map --clone " + clone_map_file + " -M -x 2 -y 1 -v 2 -S -s ',' " + column_input_file + " aha_longitudes.map"
 print(cmd); os.system(cmd)
 # - read as a variable
 aha_longitudes = pcr.readmap("aha_longitudes.map") 
 
 # convert table/column to a pcraster map of the reservoir surface area based on AHA (unit: km2)
-cmd = "col2map --clone " + clone_map_file + " -M -x 4 -y 3 -v 6 -S -s ',' " + column_input_file + " aha_surface_area_km2.map"
+cmd = "col2map --clone " + clone_map_file + " -M -x 2 -y 1 -v 6 -S -s ',' " + column_input_file + " aha_surface_area_km2.map"
 print(cmd); os.system(cmd)
 # - read as a variable
 aha_surface_area_km2 = pcr.readmap("aha_surface_area_km2.map") 
@@ -225,7 +225,11 @@ for dam_id in range(1, number_of_dams + 1):
 # ~ cmd = "map2col corrected_dam_ids.map corrected_dam_catchment_area_km2.map corrected_dams.txt"
 # ~ print(cmd); os.system(cmd)        
 
+all_reservoir_extent_ids_masked     = pcr.ifthen(pcr.defined(ldd_map), pcr.cover(pcr.nominal(all_reservoir_extent_ids), pcr.nominal(0.0)))
+all_reservoir_surface_area_masked   = pcr.ifthen(pcr.defined(ldd_map), pcr.cover(pcr.scalar(all_reservoir_surface_area), 0.0))
+all_reservoir_fraction_water_masked = pcr.ifthen(pcr.defined(ldd_map), pcr.cover(pcr.scalar(all_reservoir_fraction_water), 0.0))
+
 # save also the following variables for pcrglobwb input:
-pcr.report(all_reservoir_extent_ids,     "reservoir_extent_ids.map")
-pcr.report(all_reservoir_surface_area,   "reservoir_surface_area_ids.map")
-pcr.report(all_reservoir_fraction_water, "reservoir_fraction_water_ids.map")
+pcr.report(all_reservoir_extent_ids_masked,     "reservoir_extent_ids.map")
+pcr.report(all_reservoir_surface_area_masked,   "reservoir_surface_area_ids.map")
+pcr.report(all_reservoir_fraction_water_masked, "reservoir_fraction_water_ids.map")
