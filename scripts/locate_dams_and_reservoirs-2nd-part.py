@@ -151,6 +151,10 @@ for dam_id in range(1, number_of_dams + 1):
             # fraction of surface water within a cell
             reservoir_fraction_water = reservoir_surface_area_per_cell / cell_area
 
+            # reservoir extent
+            reservoir_extent = pcr.defined(hydrolakes_id_for_this_dam_point)
+            reservoir_extent = pcr.ifthen(reservoir_extent, reservoir_extent)
+
         else:
 
             # if not identified in the hydrolakes
