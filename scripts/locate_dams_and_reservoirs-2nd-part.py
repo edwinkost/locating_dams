@@ -174,7 +174,7 @@ for dam_id in range(1, number_of_dams + 1):
             reservoir_extent                   = this_dam_point
             reservoir_surface_area             = pcr.ifthen(reservoir_extent, cell_area)
             reservoir_surface_area_per_cell    = pcr.ifthen(reservoir_extent, cell_area)
-            reservoir_fraction_water           = pcr.ifthen(reservoir_extent, 1.0)
+            reservoir_fraction_water           = pcr.ifthen(reservoir_extent, pcr.spatial(pcr.scalar(1.0)))
             number_of_cells_for_this_reservoir = 1.0
             
             # calculate the remaining surface area that needs to be covered
