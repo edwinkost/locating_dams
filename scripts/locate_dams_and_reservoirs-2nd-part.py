@@ -87,7 +87,6 @@ for dam_id in range(1, number_of_dams + 1):
     this_dam_point = pcr.ifthen(dam_ids == dam_id, pcr.boolean(1.0))
    
     # get the reservoir surface area based on AHA (unit: m2)
-    this_dam_point = pcr.defined(location_corrected_dam_id)
     aha_surface_area_m2 = pcr.ifthen(this_dam_point, aha_surface_area_km2) * 1000.*1000.
     aha_surface_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(aha_surface_area_m2),1)[0]
     
