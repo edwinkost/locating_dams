@@ -217,13 +217,13 @@ for dam_id in range(1, number_of_dams + 1):
 # ~ # save all_location_corrected_dam_ids to a pcraster map - this will be the location of all dams/outlets
 # ~ pcr.report(all_location_corrected_dam_ids, "corrected_dam_ids.map")
 
-# obtain the catchment areas of all_location_corrected_dam_ids
-corrected_dam_catchment_area_km2 = pcr.ifthen(pcr.defined(all_location_corrected_dam_ids), catchment_area_km2)
-pcr.report(corrected_dam_catchment_area_km2, "corrected_dam_catchment_area_km2.map")
+# ~ # obtain the catchment areas of all_location_corrected_dam_ids
+# ~ corrected_dam_catchment_area_km2 = pcr.ifthen(pcr.defined(all_location_corrected_dam_ids), catchment_area_km2)
+# ~ pcr.report(corrected_dam_catchment_area_km2, "corrected_dam_catchment_area_km2.map")
 
-# obtain a table/column format for all_location_corrected_dam_ids and corrected_dam_catchment_area_km2
-cmd = "map2col corrected_dam_ids.map corrected_dam_catchment_area_km2.map corrected_dams.txt"
-print(cmd); os.system(cmd)        
+# ~ # obtain a table/column format for all_location_corrected_dam_ids and corrected_dam_catchment_area_km2
+# ~ cmd = "map2col corrected_dam_ids.map corrected_dam_catchment_area_km2.map corrected_dams.txt"
+# ~ print(cmd); os.system(cmd)        
 
 # save also the following variables for pcrglobwb input:
 pcr.report(all_reservoir_extent_ids,     "reservoir_extent_ids.map")
