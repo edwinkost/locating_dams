@@ -120,7 +120,7 @@ for dam_id in range(1, number_of_dams + 1):
         hydrolakes_ids_within_search_window = pcr.ifthen(pcr.defined(search_window), hydrolakes_ids)
         
         # check whether there are more than one hydrolakes_ids_within_search_window
-        number_of_hydrolakes_ids_within_search_window = pcr.cellvalue(pcr.mapmaximum(pcr.scalar(pcr.clump(hydrolakes_ids_within_search_window))))[0]
+        number_of_hydrolakes_ids_within_search_window = pcr.cellvalue(pcr.mapmaximum(pcr.scalar(pcr.clump(hydrolakes_ids_within_search_window))),1)[0]
 
         if number_of_hydrolakes_ids_within_search_window > 0:
             
