@@ -80,6 +80,8 @@ number_of_dams = 131
 
 number_of_dams = 10
 
+number_of_dams = 2
+
 
 for dam_id in range(1, number_of_dams + 1):
     
@@ -164,6 +166,8 @@ for dam_id in range(1, number_of_dams + 1):
             # reservoir extent
             reservoir_extent = pcr.defined(hydrolakes_id_for_this_dam_point)
             reservoir_extent = pcr.ifthen(reservoir_extent, reservoir_extent)
+            
+            pcr.aguila(reservoir_extent)
 
         else:
 
