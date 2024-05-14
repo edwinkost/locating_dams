@@ -40,31 +40,31 @@ catchment_area_km2 = pcr.catchmenttotal(cell_area, ldd_map) / (1000.*1000.)
 hydrolakes_pcrglobwb_area_m2 = pcr.areatotal(cell_area, hydrolakes_ids)
 
 # convert table/column to a pcraster map of dam ids
-cmd = "col2map --clone " + clone_map_file + " -M -x 2 -y 1 -v 3 -S -s ',' " + column_input_file + " dam_ids.map" 
+cmd = "col2map --clone " + clone_map_file + " -M -x 1 -y 2 -v 3 -S -s ',' " + column_input_file + " dam_ids.map" 
 print(cmd); os.system(cmd)
 # - read dam ids as a variable
 dam_ids = pcr.readmap("dam_ids.map") 
 
 # convert table/column to a pcraster map of catchment areas based on AHA
-cmd = "col2map --clone " + clone_map_file + " -M -x 2 -y 1 -v 4 -S -s ',' " + column_input_file + " aha_catchment_area_km2.map"
+cmd = "col2map --clone " + clone_map_file + " -M -x 1 -y 2 -v 4 -S -s ',' " + column_input_file + " aha_catchment_area_km2.map"
 print(cmd); os.system(cmd)
 # - read aha_catchment_area_km2 as a variable
 aha_catchment_area_km2 = pcr.readmap("aha_catchment_area_km2.map") 
 
 # convert table/column to a pcraster map of the latitude coordinates based on AHA
-cmd = "col2map --clone " + clone_map_file + " -M -x 2 -y 1 -v 1 -S -s ',' " + column_input_file + " aha_latitudes.map"
+cmd = "col2map --clone " + clone_map_file + " -M -x 1 -y 2 -v 2 -S -s ',' " + column_input_file + " aha_latitudes.map"
 print(cmd); os.system(cmd)
 # - read as a variable
 aha_latitudes = pcr.readmap("aha_latitudes.map") 
 
 # convert table/column to a pcraster map of the latitude coordinates based on AHA
-cmd = "col2map --clone " + clone_map_file + " -M -x 2 -y 1 -v 2 -S -s ',' " + column_input_file + " aha_longitudes.map"
+cmd = "col2map --clone " + clone_map_file + " -M -x 1 -y 2 -v 1 -S -s ',' " + column_input_file + " aha_longitudes.map"
 print(cmd); os.system(cmd)
 # - read as a variable
 aha_longitudes = pcr.readmap("aha_longitudes.map") 
 
 # convert table/column to a pcraster map of the reservoir surface area based on AHA (unit: km2)
-cmd = "col2map --clone " + clone_map_file + " -M -x 2 -y 1 -v 6 -S -s ',' " + column_input_file + " aha_surface_area_km2.map"
+cmd = "col2map --clone " + clone_map_file + " -M -x 1 -y 2 -v 6 -S -s ',' " + column_input_file + " aha_surface_area_km2.map"
 print(cmd); os.system(cmd)
 # - read as a variable
 aha_surface_area_km2 = pcr.readmap("aha_surface_area_km2.map") 
