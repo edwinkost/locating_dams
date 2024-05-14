@@ -35,7 +35,7 @@ cell_area = pcr.readmap(cell_area_file)
 hydrolakes_file = "../pcrglobwb_maps/waterBodyIds_waterBodies5ArcMin_2010.map"
 hydrolakes_ids = pcr.nominal(pcr.readmap(hydrolakes_file))
 hydrolakes_ids = pcr.ifthen(pcr.scalar(hydrolakes_ids) > 0, hydrolakes_ids)
-pcr.aguila(hydrolakes_ids)
+# ~ pcr.aguila(hydrolakes_ids)
 
 
 # calculate catchment area (in km2) based on pcrglobwb ldd
@@ -176,7 +176,7 @@ for dam_id in range(1, number_of_dams + 1):
             reservoir_extent = pcr.defined(hydrolakes_id_for_this_dam_point)
             reservoir_extent = pcr.ifthen(reservoir_extent, reservoir_extent)
             
-            pcr.aguila(reservoir_extent)
+            # ~ pcr.aguila(reservoir_extent)
 
         else:
 
