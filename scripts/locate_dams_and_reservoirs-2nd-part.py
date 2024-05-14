@@ -31,7 +31,7 @@ cell_area = pcr.readmap(cell_area_file)
 
 # hydrolakes
 hydrolakes_file = "../pcrglobwb_maps/areaIDs.map"
-hydrolakes_ids = pcr.readmap(hydrolakes_file)
+hydrolakes_ids = pcr.nominal(pcr.readmap(hydrolakes_file))
 
 # calculate catchment area (in km2) based on pcrglobwb ldd
 catchment_area_km2 = pcr.catchmenttotal(cell_area, ldd_map) / (1000.*1000.)
