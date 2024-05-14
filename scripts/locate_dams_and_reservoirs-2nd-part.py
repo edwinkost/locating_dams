@@ -153,7 +153,7 @@ for dam_id in range(1, number_of_dams + 1):
             hydrolakes_id_for_this_dam_point = pcr.ifthen(hydrolakes_id_selected_extent, pcr.spatial(pcr.scalar(dam_id)))
             
             # identify the number of cells based on the hydrolakes
-            number_of_cells_according_to_hydrolakes = pcr.areatotal(pcr.scalar(1.0), hydrolakes_id_for_this_dam_point)
+            number_of_cells_according_to_hydrolakes = pcr.areatotal(pcr.spatial(scalar(1.0)), hydrolakes_id_for_this_dam_point)
 		    
             # obtaining reservoir surface area
             reservoir_surface_area_per_cell = aha_surface_area_m2_this_dam_cell_value / number_of_cells_according_to_hydrolakes
