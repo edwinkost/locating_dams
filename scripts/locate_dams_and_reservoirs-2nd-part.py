@@ -103,6 +103,9 @@ for dam_id in range(1, number_of_dams + 1):
         # fraction of surface water within a cell
         reservoir_fraction_water = reservoir_surface_area_per_cell/cell_area
 
+        # reservoir extent
+        reservoir_extent = this_dam_point
+
     else:
 
         # this is for the case if reservoirs covering multiple cells
