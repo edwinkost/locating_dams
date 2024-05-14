@@ -127,6 +127,8 @@ for dam_id in range(1, number_of_dams + 1):
         # check whether there are more than one hydrolakes_ids_within_search_window
         number_of_hydrolakes_ids_within_search_window = pcr.cellvalue(pcr.mapmaximum(pcr.scalar(pcr.clump(hydrolakes_ids_within_search_window))),1)[0]
 
+        print(number_of_hydrolakes_ids_within_search_window)
+        
         if number_of_hydrolakes_ids_within_search_window > 0:
             
             # find the one that has the most similar surface area to the estimate on hydrolakes_pcrglobwb_area
