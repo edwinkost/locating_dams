@@ -144,7 +144,7 @@ for dam_id in range(1, number_of_dams + 1):
             ldd_above_the_dam_point = pcr.lddmask(ldd_map, sub_catchment)
             
             # define the extent based on the hydrolakes
-            hydrolakes_id_selected_extent = pcr.ifthen(hydrolakes_ids == hydrolakes_id_selected, pcr.boolean(1.0))
+            hydrolakes_id_selected_extent = pcr.ifthen(pcr.scalar(hydrolakes_ids) == hydrolakes_id_selected, pcr.boolean(1.0))
             
             # - expand the extent until the dam point until the entire reservoirs
             hydrolakes_id_selected_extent = pcr.path(ldd_above_the_dam_point, hydrolakes_id_selected_extent)
