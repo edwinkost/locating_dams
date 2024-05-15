@@ -102,6 +102,8 @@ for dam_id in range(1, number_of_dams + 1):
     aha_surface_area_m2 = pcr.ifthen(this_dam_point, aha_surface_area_km2) * 1000.*1000.
     aha_surface_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(aha_surface_area_m2),1)[0]
     
+    print(aha_surface_area_m2_this_dam_cell_value)
+    
     # get the cell area for this dam (unit: m2)
     cell_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(pcr.ifthen(this_dam_point, cell_area)),1)[0]
     
