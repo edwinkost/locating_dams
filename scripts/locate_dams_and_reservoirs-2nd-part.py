@@ -120,15 +120,17 @@ for dam_id in range(1, number_of_dams + 1):
         # this is for the case if reservoirs covering multiple cells
         
         # make a search window to find the nearest hydrolakes - expanding the point to its neighbours
-        search_window = pcr.windowmajority(this_dam_point, 5./60. * 5.)
+        search_window = pcr.windowmajority(this_dam_point, 5./60. * 3.)
         # - note using the window_length = 2 to avoid 'too large' window size
         
         # find the hydrolakes ids within this search window 
         hydrolakes_ids_within_search_window = pcr.ifthen(pcr.defined(search_window), hydrolakes_ids)
-        hydrolakes_ids_within_search_window = pcr.areamajority(hydrolakes_ids_within_search_window, hydrolakes_ids))
+        hydrolakes_ids_within_search_window = pcr.areamajority(hydrolakes_ids_within_search_window, hydrolakes_ids)
+        
+        pcr.aguila(hydrolakes_ids_within_search_window)
         
         # identify the outlets - based on pcrglobwb catchment areas
-        hydrolakes_ids_within_search_window_catchment_areas_order = pcr.areaorder(pcr.ifthen(pcr.defined(hydrolakes_ids_within_search_window), catchment_area_km2 * -1.0, hydrolakes_ids))
+        hydrolakes_ids_within_search_window_catchment_areas_order = pcr.areaorder( pcr.ifthen(pcr.defined(hydrolakes_ids_within_search_window), catchment_area_km2 * -1.0), hydrolakes_ids))
         hydrolakes_ids_within_search_window_outlets = pcr.ifthen(area_order == 1, pcr.nominal(hydrolakes_ids_within_search_window))
         
         # check whether there are more than one hydrolakes_ids_within_search_window
