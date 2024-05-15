@@ -193,7 +193,7 @@ for dam_id in range(1, number_of_dams + 1):
             reservoir_extent = pcr.defined(hydrolakes_id_for_this_dam_point)
             reservoir_extent = pcr.ifthen(reservoir_extent, reservoir_extent)
 
-            reservoir_surface_area             = pcr.ifthen(reservoir_extent, aha_surface_area_m2_this_dam_cell_value)
+            reservoir_surface_area             = pcr.ifthen(reservoir_extent, pcr.spatial(pcr.scalar(aha_surface_area_m2_this_dam_cell_value)))
             reservoir_surface_area_per_cell    = pcr.ifthen(reservoir_extent, reservoir_surface_area_per_cell)
             reservoir_fraction_water           = pcr.ifthen(reservoir_extent, reservoir_fraction_water)
             
