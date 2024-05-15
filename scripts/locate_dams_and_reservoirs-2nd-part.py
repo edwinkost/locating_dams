@@ -127,7 +127,7 @@ for dam_id in range(1, number_of_dams + 1):
         hydrolakes_ids_within_search_window = pcr.ifthen(pcr.defined(search_window), hydrolakes_ids)
         hydrolakes_ids_within_search_window = pcr.areamajority(hydrolakes_ids_within_search_window, hydrolakes_ids)
         
-        pcr.aguila(hydrolakes_ids_within_search_window)
+        # ~ pcr.aguila(hydrolakes_ids_within_search_window)
         
         # identify the outlets - based on pcrglobwb catchment areas
         hydrolakes_ids_within_search_window_catchment_areas_order = pcr.areaorder( pcr.ifthen(pcr.defined(hydrolakes_ids_within_search_window), catchment_area_km2 * -1.0), hydrolakes_ids)
@@ -140,8 +140,13 @@ for dam_id in range(1, number_of_dams + 1):
         
         if number_of_hydrolakes_ids_within_search_window > 0:
             
+            hydrolakes_ids_within_search_window_area_m2 = pcr.areatotal(cell_area, hydrolakes_ids_within_search_window)
+            
             # find the one that has the most similar surface area to the estimate on hydrolakes_pcrglobwb_area
-            absolute_difference_surface_area = pcr.abs(hydrolakes_pcrglobwb_area_m2 - aha_surface_area_m2_this_dam_cell_value)
+            absolute_difference_surface_area = pcr.abs(hydrolakes_ids_within_search_window_area_m2 - aha_surface_area_m2_this_dam_cell_value)
+            
+            pcr.aguila(absolute_difference_surface_area)
+            
             absolute_difference_surface_area = pcr.ifthen(pcr.defined(hydrolakes_ids_within_search_window_outlets), absolute_difference_surface_area)
             
             class_map_boolean = pcr.defined(absolute_difference_surface_area)
