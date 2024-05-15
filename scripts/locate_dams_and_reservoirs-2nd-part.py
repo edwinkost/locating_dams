@@ -142,8 +142,12 @@ for dam_id in range(1, number_of_dams + 1):
             
             hydrolakes_ids_within_search_window_area_m2 = pcr.areatotal(cell_area, hydrolakes_ids_within_search_window)
             
+            pcr.aguila(hydrolakes_ids_within_search_window_area_m2)
+            
             # find the one that has the most similar surface area to the estimate on hydrolakes_pcrglobwb_area
             absolute_difference_surface_area = pcr.abs(hydrolakes_ids_within_search_window_area_m2 - aha_surface_area_m2_this_dam_cell_value)/aha_surface_area_m2_this_dam_cell_value
+            
+            print(aha_surface_area_m2_this_dam_cell_value)
             
             pcr.aguila(absolute_difference_surface_area)
             
