@@ -234,7 +234,7 @@ for dam_id in range(1, number_of_dams + 1):
                 reservoir_surface_area_per_cell = pcr.cover(reservoir_surface_area_per_cell, additional_reservoir_surface_area_per_cell)
                 
                 # calculate the remaining surface area that needs to be covered
-                remaining_area = aha_surface_area_m2_this_dam_cell_value - pcr.cellvalue(pcr.maptotal(reservoir_surface_area_per_cell))
+                remaining_area = aha_surface_area_m2_this_dam_cell_value - pcr.cellvalue(pcr.maptotal(reservoir_surface_area_per_cell),1)[0]
             
             # update the reservoir with upstream cells
             reservoir_extent         = pcr.cover(reservoir_extent, pcr.ifthen(reservoir_surface_area_per_cell > 0.0, pcr.boolean(1.0)))
