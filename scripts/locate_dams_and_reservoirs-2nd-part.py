@@ -125,11 +125,14 @@ for dam_id in range(1, number_of_dams + 1):
         
         # find the hydrolakes ids within this search window 
         hydrolakes_ids_within_search_window = pcr.ifthen(pcr.defined(search_window), hydrolakes_ids)
+        hydrolakes_ids_within_search_window = pcr.areamajority(hydrolakes_ids_within_search_window, hydrolakes_ids))
         
-        pcr.aguila(pcr.areamajority(hydrolakes_ids_within_search_window, hydrolakes_ids))
+        # identify the outlets - based on pcrglobwb catchment areas
+        hydrolakes_ids_within_search_window_catchment_areas_order = pcr.areaorder(pcr.ifthen(pcr.defined(hydrolakes_ids_within_search_window), catchment_area_km2 * -1.0, hydrolakes_ids))
+        hydrolakes_ids_within_search_window_outlets = pcr.ifthen(area_order == 1, pcr.nominal(hydrolakes_ids_within_search_window))
         
         # check whether there are more than one hydrolakes_ids_within_search_window
-        number_of_hydrolakes_ids_within_search_window = pcr.cellvalue(pcr.mapmaximum(pcr.scalar(pcr.clump(hydrolakes_ids_within_search_window))),1)[0]
+        number_of_hydrolakes_ids_within_search_window = pcr.cellvalue(pcr.mapmaximum(pcr.scalar(pcr.clump(hydrolakes_ids_within_search_window_outlets))),1)[0]
 
         print(number_of_hydrolakes_ids_within_search_window)
         
@@ -137,7 +140,7 @@ for dam_id in range(1, number_of_dams + 1):
             
             # find the one that has the most similar surface area to the estimate on hydrolakes_pcrglobwb_area
             absolute_difference_surface_area = pcr.abs(hydrolakes_pcrglobwb_area_m2 - aha_surface_area_m2_this_dam_cell_value)
-            absolute_difference_surface_area = pcr.ifthen(pcr.defined(search_window), absolute_difference_surface_area)
+            absolute_difference_surface_area = pcr.ifthen(pcr.defined(hydrolakes_ids_within_search_window_outlets), absolute_difference_surface_area)
             
             class_map_boolean = pcr.defined(absolute_difference_surface_area)
             class_map_nominal = pcr.ifthen(class_map_boolean, pcr.nominal(1.0))
