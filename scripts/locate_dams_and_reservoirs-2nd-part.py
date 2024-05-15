@@ -223,6 +223,8 @@ for dam_id in range(1, number_of_dams + 1):
             
             while remaining_area > 0:
             
+                print(remaining_area)
+                
                 # identify the upstream cells
                 upstream_cells_of_reservoirs = pcr.boolean(pcr.downstream(ldd_map, pcr.cover(pcr.scalar(reservoir_extent), 0.0)))
 
