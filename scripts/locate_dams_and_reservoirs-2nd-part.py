@@ -37,6 +37,9 @@ hydrolakes_ids = pcr.nominal(pcr.readmap(hydrolakes_file))
 hydrolakes_ids = pcr.ifthen(pcr.scalar(hydrolakes_ids) > 0, hydrolakes_ids)
 # ~ pcr.aguila(hydrolakes_ids)
 
+# fraction water
+hydrolakes_fraction_water_file = "../pcrglobwb_maps/fracWaterInp_waterBodies5ArcMin_2010.map" 
+hydrolakes_fraction_water = pcr.readmap(hydrolakes_fraction_water_file)
 
 # calculate catchment area (in km2) based on pcrglobwb ldd
 catchment_area_km2 = pcr.catchmenttotal(cell_area, ldd_map) / (1000.*1000.)
@@ -140,7 +143,7 @@ for dam_id in range(1, number_of_dams + 1):
         
         if number_of_hydrolakes_ids_within_search_window > 0:
             
-            hydrolakes_ids_within_search_window_area_m2 = pcr.areatotal(cell_area, hydrolakes_ids_within_search_window)
+            hydrolakes_ids_within_search_window_area_m2 = pcr.areatotal(cell_area * hydrolakes_fraction_water, hydrolakes_ids_within_search_window)
             
             pcr.aguila(hydrolakes_ids_within_search_window_area_m2)
             
