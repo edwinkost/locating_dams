@@ -239,7 +239,7 @@ for dam_id in range(1, number_of_dams + 1):
                 additional_reservoir_surface_area_per_cell = pcr.ifthen(upstream_cells_of_reservoirs, pcr.min(remaining_area / num_of_upstream_cells, cell_area))
                 
                 # the updated reservoir surface area per cell
-                reservoir_surface_area_per_cell = pcr.cover(reservoir_surface_area_per_ce]ll, additional_reservoir_surface_area_per_cell)
+                reservoir_surface_area_per_cell = pcr.cover(reservoir_surface_area_per_cell, additional_reservoir_surface_area_per_cell)
                 
                 print(aha_surface_area_m2_this_dam_cell_value)
                 print(pcr.cellvalue(pcr.maptotal(reservoir_surface_area_per_cell),1)[0])
