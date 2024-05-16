@@ -88,7 +88,7 @@ number_of_dams = 131
 
 number_of_dams = 10
 
-# ~ number_of_dams = 2
+number_of_dams = 3
 
 
 for dam_id in range(1, number_of_dams + 1):
@@ -226,7 +226,7 @@ for dam_id in range(1, number_of_dams + 1):
                 print(remaining_area)
                 
                 # identify the upstream cells
-                upstream_cells_of_reservoirs = pcr.boolean(pcr.downstream(ldd_map, pcr.cover(pcr.scalar(reservoir_extent), 0.0)))
+                upstream_cells_of_reservoirs = pcr.ifthen(pcr.downstream(ldd_map, pcr.cover(pcr.scalar(reservoir_extent), 0.0)) == pcr.scalar(1.0), pcr.boolean(1.0)) 
 
                 # number of upstream cells
                 num_of_upstream_cells = pcr.maptotal(pcr.scalar(upstream_cells_of_reservoirs))
