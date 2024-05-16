@@ -88,7 +88,7 @@ number_of_dams = 131
 
 number_of_dams = 10
 
-number_of_dams = 3
+# ~ number_of_dams = 3
 
 
 for dam_id in range(1, number_of_dams + 1):
@@ -221,14 +221,14 @@ for dam_id in range(1, number_of_dams + 1):
             # calculate the remaining surface area that needs to be covered
             remaining_area = aha_surface_area_m2_this_dam_cell_value - pcr.cellvalue(pcr.maptotal(reservoir_surface_area_per_cell),1)[0]
             
-            while remaining_area > 0.01*aha_surface_area_m2_this_dam_cell_value:
+            while remaining_area > 0.1*aha_surface_area_m2_this_dam_cell_value:
             
                 print(remaining_area)
                 
                 # identify the upstream cells
                 upstream_cells_of_reservoirs = pcr.ifthen(pcr.downstream(ldd_map, pcr.cover(pcr.scalar(reservoir_extent), 0.0)) == pcr.scalar(1.0), pcr.boolean(1.0)) 
                 
-                pcr.aguila(upstream_cells_of_reservoirs)
+                # ~ pcr.aguila(upstream_cells_of_reservoirs)
                 
                 # number of upstream cells
                 num_of_upstream_cells = pcr.cellvalue(pcr.maptotal(pcr.scalar(upstream_cells_of_reservoirs)),1)[0]
