@@ -227,9 +227,15 @@ for dam_id in range(1, number_of_dams + 1):
                 
                 # identify the upstream cells
                 upstream_cells_of_reservoirs = pcr.ifthen(pcr.downstream(ldd_map, pcr.cover(pcr.scalar(reservoir_extent), 0.0)) == pcr.scalar(1.0), pcr.boolean(1.0)) 
-
+                
+                pcr.aguila(upstream_cells_of_reservoirs)
+                
                 # number of upstream cells
                 num_of_upstream_cells = pcr.maptotal(pcr.scalar(upstream_cells_of_reservoirs))
+                
+                print(num_of_upstream_cells)
+                
+                test
                 
                 # reservoir surface area at the upstream cells
                 additional_reservoir_surface_area_per_cell = pcr.ifthen(upstream_cells_of_reservoirs, pcr.min(remaining_area / num_of_upstream_cells, cell_area))
