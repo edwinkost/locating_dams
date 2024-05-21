@@ -72,10 +72,23 @@ merged_aha_resSfAreaInp = pcr.cover(aha_resSfAreaInp, aha_resSfAreaInp)
 aha_waterBodyTyp      = pcr.ifthen(pcr.defined(aha_ids), pcr.scalar(2.0))
 merged_waterBodyTyp   = pcr.cover(aha_waterBodyTyp, pgb_waterBodyTyp)
 
+# define the landmask based on ldd
+ldd_map_file = "../pcrglobwb_maps/lddsound_05min_version_20210330.map"
+ldd_map = pcr.readmap(ldd_map_file)
+landmask = pcr.defined(ldd_map)
+
+# set the exent of all maps to the landmask only
+merged_waterBodyIds = pcr.ifthen(landmask, pcr.cover(merged_waterBodyIds, pcr.nominal(0)))
+merged_fracWaterInp = pcr.ifthen(landmask, pcr.cover(merged_fracWaterInp, 0.0))
+merged_resMaxCapInp = pcr.ifthen(landmask, pcr.cover(merged_resMaxCapInp, 0.0))
+merged_resMaxCapInp = pcr.ifthen(landmask, pcr.cover(merged_resMaxCapInp, 0.0))
+merged_waterBodyTyp = pcr.ifthen(landmask, pcr.cover(merged_waterBodyTyp, 0.0))
+
 # save all reservoir types
 pcr.report(merged_waterBodyIds, "merged_waterBodyIds_existing.map")
 pcr.report(merged_fracWaterInp, "merged_fracWaterInp_existing.map")
 pcr.report(merged_resMaxCapInp, "merged_resMaxCapInp_existing.map")
 pcr.report(merged_resMaxCapInp, "merged_resMaxCapInp_existing.map")
 pcr.report(merged_waterBodyTyp, "merged_waterBodyTyp_existing.map")
+
 
