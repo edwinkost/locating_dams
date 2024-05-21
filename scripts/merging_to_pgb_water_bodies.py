@@ -69,7 +69,7 @@ aha_resSfAreaInp_file   = "/home/edwinaha/github/edwinkost/locating_dams/scripts
 aha_resSfAreaInp        = pcr.readmap(aha_resSfAreaInp_file)
 merged_aha_resSfAreaInp = pcr.cover(aha_resSfAreaInp, aha_resSfAreaInp)
 # - reservoir type
-aha_waterBodyTyp      = pcr.ifthen(pcr.defined(aha_ids), pcr.scalarl(2.0))
+aha_waterBodyTyp      = pcr.ifthen(pcr.defined(aha_ids), pcr.scalar(2.0))
 merged_waterBodyTyp   = pcr.cover(aha_waterBodyTyp, pgb_waterBodyTyp)
 
 # save all reservoir types
