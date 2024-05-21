@@ -65,9 +65,9 @@ aha_resMaxCapInp_file = "/home/edwinaha/github/edwinkost/locating_dams/scripts/e
 aha_resMaxCapInp      = pcr.readmap(aha_resMaxCapInp_file)
 merged_resMaxCapInp   = pcr.cover(aha_resMaxCapInp, pgb_resMaxCapInp)
 # - reservoir surface area
-aha_resSfAreaInp_file   = "/home/edwinaha/github/edwinkost/locating_dams/scripts/existing_reservoir_surface_area_ids_m2.map"
-aha_resSfAreaInp        = pcr.readmap(aha_resSfAreaInp_file)
-merged_aha_resSfAreaInp = pcr.cover(aha_resSfAreaInp, aha_resSfAreaInp)
+aha_resSfAreaInp_file = "/home/edwinaha/github/edwinkost/locating_dams/scripts/existing_reservoir_surface_area_ids_m2.map"
+aha_resSfAreaInp      = pcr.readmap(aha_resSfAreaInp_file)
+merged_resSfAreaInp   = pcr.cover(aha_resSfAreaInp, pgb_resSfAreaInp)
 # - reservoir type
 aha_waterBodyTyp      = pcr.ifthen(pcr.defined(aha_ids), pcr.scalar(2.0))
 merged_waterBodyTyp   = pcr.cover(aha_waterBodyTyp, pgb_waterBodyTyp)
@@ -81,14 +81,14 @@ landmask = pcr.defined(ldd_map)
 merged_waterBodyIds = pcr.ifthen(landmask, pcr.cover(merged_waterBodyIds, pcr.nominal(0)))
 merged_fracWaterInp = pcr.ifthen(landmask, pcr.cover(merged_fracWaterInp, 0.0))
 merged_resMaxCapInp = pcr.ifthen(landmask, pcr.cover(merged_resMaxCapInp, 0.0))
-merged_resMaxCapInp = pcr.ifthen(landmask, pcr.cover(merged_resMaxCapInp, 0.0))
+merged_resSfAreaInp = pcr.ifthen(landmask, pcr.cover(merged_resSfAreaInp, 0.0))
 merged_waterBodyTyp = pcr.ifthen(landmask, pcr.cover(merged_waterBodyTyp, 0.0))
 
 # save all reservoir types
 pcr.report(merged_waterBodyIds, "merged_waterBodyIds_existing.map")
 pcr.report(merged_fracWaterInp, "merged_fracWaterInp_existing.map")
 pcr.report(merged_resMaxCapInp, "merged_resMaxCapInp_existing.map")
-pcr.report(merged_resMaxCapInp, "merged_resMaxCapInp_existing.map")
+pcr.report(merged_resSfAreaInp, "merged_resSfAreaInp_existing.map")
 pcr.report(merged_waterBodyTyp, "merged_waterBodyTyp_existing.map")
 
 
