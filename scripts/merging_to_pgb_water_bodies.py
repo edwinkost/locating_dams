@@ -34,7 +34,7 @@ aha_ids_new_ids_scalar = pcr.mapmaximum(pcr.scalar(pgb_ids)) * 10.0 + pcr.scalar
 aha_ids = pcr.nominal(aha_ids_new_ids_scalar)
 
 # exclude pgb_ids that are in aha_ids
-pgb_ids_ids_exclusion = pcr.ifthen(pcr.defined(aha_ids), pcr.nominal(0), pgb_ids)
+pgb_ids_ids_exclusion = pcr.ifthenelse(pcr.defined(aha_ids), pcr.nominal(0), pgb_ids)
 pgb_ids = pcr.nominal(pcr.areaminimum(pcr.scalar(pgb_ids_ids_exclusion), pgb_ids))
 pgb_ids = pcr.ifthen(pcr.scalar(pgb_ids) > 0.0, pgb_ids)
 
