@@ -220,7 +220,7 @@ for dam_id in range(1, number_of_dams + 1):
             # ~ pcr.aguila(reservoir_extent)
             
             # reservoir capacity
-            reservoir_capacity = pcr.ifthen(reservoir_extent, aha_reservoir_capacity_m3_this_dam_cell_value)
+            reservoir_capacity = pcr.ifthen(reservoir_extent, pcr.spatial(pcr.scalar(aha_reservoir_capacity_m3_this_dam_cell_value)))
 
         else:
 
@@ -275,8 +275,9 @@ for dam_id in range(1, number_of_dams + 1):
                 
                 # TODO: also stop the process if num_of_upstream_cells x cell_area > remaining_area
 
+
             # reservoir capacity
-            reservoir_capacity = pcr.ifthen(reservoir_extent, aha_reservoir_capacity_m3_this_dam_cell_value)
+            reservoir_capacity = pcr.ifthen(reservoir_extent, pcr.spatial(pcr.scalar(aha_reservoir_capacity_m3_this_dam_cell_value)))
 
     # we summarize all reservoirs into single variables 
     if dam_id == 1:    
