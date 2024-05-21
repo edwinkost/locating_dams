@@ -55,7 +55,7 @@ pgb_waterBodyTyp = pcr.ifthen(pcr.defined(pgb_ids), pcr.readmap(pgb_waterBodyTyp
 # read/set AHA properties and merge them to pcrglobwb
 # - ids and extent
 aha_waterBodyIds    = aha_ids
-merged_waterBodyIds = pcr.cover(aha_waterBodyIds, pgb_waterBodyIds)
+merged_waterBodyIds = pcr.cover(aha_waterBodyIds, pgb_ids)
 # - fraction water 
 aha_fracWaterInp_file = "/home/edwinaha/github/edwinkost/locating_dams/scripts/existing_reservoir_fraction_water_ids.map"
 aha_fracWaterInp      = pcr.readmap(aha_fracWaterInp_file)
