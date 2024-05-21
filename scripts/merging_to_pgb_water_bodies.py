@@ -67,7 +67,7 @@ merged_resMaxCapInp   = pcr.cover(aha_resMaxCapInp, pgb_resMaxCapInp)
 # - reservoir surface area
 aha_resSfAreaInp_file   = "/home/edwinaha/github/edwinkost/locating_dams/scripts/existing_reservoir_surface_area_ids_m2.map"
 aha_resSfAreaInp        = pcr.readmap(aha_resSfAreaInp_file)
-merged_aha_resSfAreaInp = pcr.cover(merged_aha_resSfAreaInp, aha_resSfAreaInp)
+merged_aha_resSfAreaInp = pcr.cover(aha_resSfAreaInp, aha_resSfAreaInp)
 # - reservoir type
 aha_waterBodyTyp      = pcr.ifthen(pcr.defined(aha_ids), pcr.nominal(2.0))
 merged_waterBodyTyp   = pcr.cover(aha_waterBodyTyp, pgb_waterBodyTyp)
