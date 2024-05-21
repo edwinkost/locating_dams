@@ -283,12 +283,12 @@ for dam_id in range(1, number_of_dams + 1):
         all_reservoir_extent_ids     = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.spatial(pcr.scalar(dam_id))))
         all_reservoir_surface_area   = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_surface_area)))
         all_reservoir_fraction_water = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_fraction_water))) 
-        all_reservoir_capacity       = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_capacity)))
+        all_reservoir_capacity       = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.spatial(pcr.scalar(reservoir_capacity))))
     else:
         all_reservoir_extent_ids     = pcr.cover(all_reservoir_extent_ids,     pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.spatial(pcr.scalar(dam_id)))))
         all_reservoir_surface_area   = pcr.cover(all_reservoir_surface_area,   pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_surface_area))))
         all_reservoir_fraction_water = pcr.cover(all_reservoir_fraction_water, pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_fraction_water)))) 
-        all_reservoir_capacity       = pcr.cover(all_reservoir_capacity,       pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_capacity))))
+        all_reservoir_capacity       = pcr.cover(all_reservoir_capacity,       pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.spatial(pcr.scalar(reservoir_capacity)))))
 
 # ~ # save all_location_corrected_dam_ids to a pcraster map - this will be the location of all dams/outlets
 # ~ pcr.report(all_location_corrected_dam_ids, "corrected_dam_ids.map")
