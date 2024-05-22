@@ -86,6 +86,13 @@ print(cmd); os.system(cmd)
 # - read as a variable
 aha_surface_area_km2 = pcr.readmap("aha_surface_area_km2.map") 
 
+# convert table/column to a pcraster map of the reservoir capacity based on AHA (unit: 10^6 m3)
+cmd = "col2map --clone " + clone_map_file + " -M -x 1 -y 2 -v 5 -S -s ',' " + column_input_file + " aha_reservoir_capacity_million_m3.map"
+print(cmd); os.system(cmd)
+# - read as a variable
+aha_reservoir_capacity_m3 = pcr.readmap("aha_reservoir_capacity_million_m3.map") * (10**(6))
+
+
 # get the pcrglobwb catchment area for every dam id
 dam_ids_pcrglobwb_catchment_area_km2 = pcr.ifthen(pcr.defined(dam_ids), catchment_area_km2)
 
@@ -93,7 +100,7 @@ dam_ids_pcrglobwb_catchment_area_km2 = pcr.ifthen(pcr.defined(dam_ids), catchmen
 rel_dif_catchment_area = pcr.abs(aha_catchment_area_km2 - dam_ids_pcrglobwb_catchment_area_km2) / dam_ids_pcrglobwb_catchment_area_km2
 
 # loop through all dams
-number_of_dams = 10
+number_of_dams = 109
 
 for dam_id in range(1, number_of_dams + 1):
     
@@ -105,9 +112,12 @@ for dam_id in range(1, number_of_dams + 1):
     # get the reservoir surface area based on AHA (unit: m2)
     aha_surface_area_m2 = pcr.ifthen(this_dam_point, aha_surface_area_km2) * 1000.*1000.
     aha_surface_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(aha_surface_area_m2),1)[0]
-    
+
     print(1, aha_surface_area_m2_this_dam_cell_value)
-    
+
+    # get the reservoir capacity based on AHA (unit: m3)
+    aha_reservoir_capacity_m3_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(pcr.ifthen(this_dam_point, aha_reservoir_capacity_m3)),1)[0]
+
     # get the cell area for this dam (unit: m2)
     cell_area_m2_this_dam_cell_value = pcr.cellvalue(pcr.mapmaximum(pcr.ifthen(this_dam_point, cell_area)),1)[0]
     print(2, cell_area_m2_this_dam_cell_value)
@@ -124,6 +134,9 @@ for dam_id in range(1, number_of_dams + 1):
 
         # reservoir extent
         reservoir_extent = this_dam_point
+        
+        # reservoir capacity
+        reservoir_capacity = aha_reservoir_capacity_m3_this_dam_cell_value
 
     else:
 
@@ -205,6 +218,9 @@ for dam_id in range(1, number_of_dams + 1):
             reservoir_fraction_water           = pcr.ifthen(reservoir_extent, reservoir_fraction_water)
             
             # ~ pcr.aguila(reservoir_extent)
+            
+            # reservoir capacity
+            reservoir_capacity = pcr.ifthen(reservoir_extent, pcr.spatial(pcr.scalar(aha_reservoir_capacity_m3_this_dam_cell_value)))
 
         else:
 
@@ -260,15 +276,20 @@ for dam_id in range(1, number_of_dams + 1):
                 # TODO: also stop the process if num_of_upstream_cells x cell_area > remaining_area
 
 
+            # reservoir capacity
+            reservoir_capacity = pcr.ifthen(reservoir_extent, pcr.spatial(pcr.scalar(aha_reservoir_capacity_m3_this_dam_cell_value)))
+
     # we summarize all reservoirs into single variables 
     if dam_id == 1:    
         all_reservoir_extent_ids     = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.spatial(pcr.scalar(dam_id))))
         all_reservoir_surface_area   = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_surface_area)))
         all_reservoir_fraction_water = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_fraction_water))) 
+        all_reservoir_capacity       = pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.spatial(pcr.scalar(reservoir_capacity))))
     else:
         all_reservoir_extent_ids     = pcr.cover(all_reservoir_extent_ids,     pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.spatial(pcr.scalar(dam_id)))))
         all_reservoir_surface_area   = pcr.cover(all_reservoir_surface_area,   pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_surface_area))))
         all_reservoir_fraction_water = pcr.cover(all_reservoir_fraction_water, pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.scalar(reservoir_fraction_water)))) 
+        all_reservoir_capacity       = pcr.cover(all_reservoir_capacity,       pcr.ifthen(reservoir_extent, pcr.mapmaximum(pcr.spatial(pcr.scalar(reservoir_capacity)))))
 
 # ~ # save all_location_corrected_dam_ids to a pcraster map - this will be the location of all dams/outlets
 # ~ pcr.report(all_location_corrected_dam_ids, "corrected_dam_ids.map")
@@ -281,11 +302,13 @@ for dam_id in range(1, number_of_dams + 1):
 # ~ cmd = "map2col corrected_dam_ids.map corrected_dam_catchment_area_km2.map corrected_dams.txt"
 # ~ print(cmd); os.system(cmd)        
 
-all_reservoir_extent_ids_masked     = pcr.ifthen(pcr.defined(ldd_map), pcr.cover(pcr.nominal(all_reservoir_extent_ids), pcr.nominal(0.0)))
-all_reservoir_surface_area_masked   = pcr.ifthen(pcr.defined(ldd_map), pcr.cover(pcr.scalar(all_reservoir_surface_area), 0.0))
-all_reservoir_fraction_water_masked = pcr.ifthen(pcr.defined(ldd_map), pcr.cover(pcr.scalar(all_reservoir_fraction_water), 0.0))
+all_reservoir_extent_ids_masked           = pcr.ifthen(pcr.defined(ldd_map), pcr.cover(pcr.nominal(all_reservoir_extent_ids), pcr.nominal(0.0)))
+all_reservoir_surface_area_masked         = pcr.ifthen(pcr.defined(ldd_map), pcr.cover(pcr.scalar(all_reservoir_surface_area), 0.0))
+all_reservoir_fraction_water_masked       = pcr.ifthen(pcr.defined(ldd_map), pcr.cover(pcr.scalar(all_reservoir_fraction_water), 0.0))
+all_reservoir_capacity_million_m3_masked  = pcr.ifthen(pcr.defined(ldd_map), pcr.cover(pcr.scalar(all_reservoir_capacity), 0.0)) / (10**6)
 
 # save also the following variables for pcrglobwb input:
-pcr.report(all_reservoir_extent_ids_masked,     "prova_future_reservoir_extent_ids.map")
-pcr.report(all_reservoir_surface_area_masked,   "prova_future_reservoir_surface_area_ids.map")
-pcr.report(all_reservoir_fraction_water_masked, "prova_future_reservoir_fraction_water_ids.map")
+pcr.report(all_reservoir_extent_ids_masked,     "future_reservoir_extent_ids.map")
+pcr.report(all_reservoir_surface_area_masked,   "future_reservoir_surface_area_ids_m2.map")
+pcr.report(all_reservoir_fraction_water_masked, "future_reservoir_fraction_water_ids.map")
+pcr.report(all_reservoir_capacity_million_m3_masked, "future_reservoir_capacity_ids_million_m3.map")
